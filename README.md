@@ -31,13 +31,15 @@ api/
 ## Features
 
 - **Clean Architecture**: Clear separation of concerns and dependencies
+- **Centralized Configuration**: Default settings in codebase, sensitive data in environment variables
+- **Flexible Authentication**: Support for multiple authentication strategies
 - **Repository Pattern**: Abstraction of database access
 - **Dependency Injection**: Facilitates testability and decoupling
 - **Error Handling**: Centralized error handling
-- **Logging System**: Configurable logging
+- **Logging System**: Configurable logging to console and database
 - **Type Safety**: Consistent use of TypeScript types
 - **Middleware Pattern**: Reusable Express middleware
-- **Environment Config**: Configurable environment variables
+- **Environment Config**: Minimal environment variables required to start
 
 ## Installation
 
@@ -55,16 +57,42 @@ npm install
 npm run dev
 ```
 
-## Environment Variables
+## Configuration
 
-Create a `.env` file in the root directory with the following variables:
+The application uses a centralized configuration system with sensible defaults:
+
+- **Default Configuration**: Non-sensitive settings are defined in `src/shared/config/app.config.ts`
+- **Environment Variables**: Only sensitive data (credentials, keys) are stored in the `.env` file
+
+### Authentication Options
+
+The application supports multiple authentication strategies:
+
+1. **No Authentication** (`none`): For quick development and testing
+2. **Supabase Authentication** (`supabase`): JWT-based authentication with Supabase
+3. **Static API Key** (`static`): Simple API key authentication
+
+To change the authentication type, modify `app.config.ts` or set the `AUTH_VALIDATION_TYPE` environment variable.
+
+### Required Environment Variables
+
+Create a `.env` file in the root directory with these variables (only add what you need):
 
 ```env
+# Server Configuration (Optional - defaults are in app.config.ts)
 PORT=3000
 NODE_ENV=development
+
+# Authentication Configuration (Optional - defaults are in app.config.ts)
+# AUTH_VALIDATION_TYPE=none|supabase|static
+
+# For Supabase Authentication (only if using 'supabase' validation type)
 SUPABASE_URL=your-supabase-url
 SUPABASE_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_KEY=your-supabase-service-key
+
+# For Static Key Authentication (only if using 'static' validation type)
+STATIC_API_KEY=your-static-api-key
 ```
 
 ## Scripts

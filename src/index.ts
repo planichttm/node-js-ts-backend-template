@@ -1,18 +1,17 @@
+// src/index.ts
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { clientInfoMiddleware } from './http/middleware/client-info.middleware';
 import healthRoutes from './http/routes/health.routes';
 import { logger } from './shared/utils/logging.utils';
 import { getMemoryUsage } from './shared/utils/memory-management.utils';
-
-// Lade Umgebungsvariablen
-dotenv.config();
+import { appConfig } from './shared/config/app.config';
+import { validateAuthCredentials } from './shared/utils/validation.utils';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = appConfig.server.port;
 
-// CORS-Konfiguration
+// CORS configuration
 const corsOptions = {
   origin: "*",
   methods: ["GET", "POST", "DELETE", "OPTIONS", "PUT"], 
@@ -20,24 +19,34 @@ const corsOptions = {
   credentials: true,
 };
 
-// Middleware einrichten
+// Middleware setup
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false, limit: '1mb' }));
 app.use(clientInfoMiddleware);
 
-// API-Routen
+// API routes
 app.use('/api/health', healthRoutes);
 
+// Validate authentication configuration
+if (appConfig.auth.validationType !== 'none') {
+  const isAuthValid = validateAuthCredentials();
+  if (!isAuthValid) {
+    logger.warn(`Authentication validation type '${appConfig.auth.validationType}' is configured but credentials are missing or invalid. Some features may not work properly.`, {
+      context: 'Application'
+    });
+  }
+}
 
-// Server starten
+// Start server
 app.listen(port, () => {
   logger.system(`Server running on port ${port}`, {
     context: 'Application',
     metadata: {
       port,
       memoryUsage: getMemoryUsage(),
-      environment: process.env.NODE_ENV || 'development'
+      environment: appConfig.server.environment,
+      authType: appConfig.auth.validationType
     }
   });
 });
@@ -50,7 +59,7 @@ process.on('SIGTERM', () => {
   process.exit(0);
 });
 
-// Fehlerbehandlung für unbehandelte Ausnahmen
+// Error handling for uncaught exceptions
 process.on('uncaughtException', (error) => {
   logger.error('Uncaught Exception', {
     context: 'Application',

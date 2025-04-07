@@ -1,6 +1,8 @@
+// src/shared/utils/logging.utils.ts
 import { Request } from 'express';
+import { appConfig } from '../config/app.config';
+import { LogLevel, LogLevelConfig } from '../config/logging.config';
 import { supabase } from '../config/supabase';
-import { LogLevel, LogLevelConfig, loggingConfig } from '../config/logging.config';
 
 interface LogEntry {
   log_text: string;
@@ -30,6 +32,11 @@ interface LogOptions {
 
 class Logger {
   private async writeToSupabase(entry: LogEntry): Promise<void> {
+    // Only try to write to Supabase if it's initialized and database logging is enabled
+    if (!supabase || !appConfig.logging.database.enabled) {
+      return;
+    }
+    
     try {
       const { error } = await supabase
         .from('sys_log')
@@ -73,38 +80,52 @@ class Logger {
   ): Promise<void> {
     const formattedMessage = this.formatMessage(level, message, options);
 
-    // Console logging - nur wenn Level über oder gleich minimumConsoleLogLevel
-    if (loggingConfig.console.enabled && level.value >= loggingConfig.minimumConsoleLogLevel.value) {
-      const output = loggingConfig.console.colorized 
-        ? `${level.color}${formattedMessage}${LogLevel.NONE.color}`
-        : formattedMessage;
-      console.log(output);
+    // Console logging based on app config
+    if (appConfig.logging.console.enabled) {
+      const minLevel = this.getLevelByName(appConfig.logging.level);
+      if (level.value >= minLevel.value) {
+        const output = appConfig.logging.console.colorized 
+          ? `${level.color}${formattedMessage}${LogLevel.NONE.color}`
+          : formattedMessage;
+        console.log(output);
+      }
     }
 
-    // Supabase logging
-    if (level.value >= loggingConfig.minimumSupabaseLogLevel.value) {
-      const logEntry: LogEntry = {
-        log_text: formattedMessage,
-        log_level: level.value,
-        log_category: options?.category,
-        context: options?.context,
-        requestId: options?.requestId,
-        error: options?.error,
-        url: options?.url,
-        method: options?.method,
-        duration: options?.duration,
-        operation: options?.operation,
-        created_at: new Date().toISOString()
-      };
+    // Database logging based on app config
+    if (appConfig.logging.database.enabled) {
+      const minDatabaseLevel = this.getLevelByName(appConfig.logging.database.minLevel);
+      if (level.value >= minDatabaseLevel.value) {
+        const logEntry: LogEntry = {
+          log_text: formattedMessage,
+          log_level: level.value,
+          log_category: options?.category,
+          context: options?.context,
+          requestId: options?.requestId,
+          error: options?.error,
+          url: options?.url,
+          method: options?.method,
+          duration: options?.duration,
+          operation: options?.operation,
+          created_at: new Date().toISOString()
+        };
 
-      await this.writeToSupabase(logEntry);
+        await this.writeToSupabase(logEntry);
+      }
     }
   }
 
-  // Hilfsfunktion zum temporären Ändern des Log-Levels
-  public setConsoleLogLevel(level: LogLevelConfig): LogLevelConfig {
-    const previousLevel = loggingConfig.minimumConsoleLogLevel;
-    (loggingConfig as any).minimumConsoleLogLevel = level;
+  // Helper method to get LogLevelConfig by name
+  private getLevelByName(levelName: string): LogLevelConfig {
+    const level = Object.entries(LogLevel).find(
+      ([key]) => key.toLowerCase() === levelName.toLowerCase()
+    );
+    return level ? level[1] : LogLevel.INFO;
+  }
+
+  // Helper function to temporarily change the log-level
+  public setConsoleLogLevel(level: LogLevelConfig): string {
+    const previousLevel = appConfig.logging.level;
+    appConfig.logging.level = level.label;
     return previousLevel;
   }
 
