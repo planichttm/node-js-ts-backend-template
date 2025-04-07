@@ -1,0 +1,3 @@
+# HTTP Controllers Layer
+
+Controllers in this application handle HTTP requests/responses, validate inputs, and manage API endpoints without containing any business logic. They receive requests, validate input parameters, delegate processing to UseCases, and transform the results into appropriate HTTP responses. Their primary responsibility is to act as a thin adapter between the HTTP transport layer and the domain logic, ensuring separation of concerns and keeping HTTP-specific code isolated from the core application.

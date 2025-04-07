@@ -1,0 +1,3 @@
+# Validators Layer
+
+The validators layer contains logic for validating and sanitizing data before it's processed by the application. It ensures that incoming data meets the expected format and business rules, preventing invalid data from reaching the core business logic. Validators are separated from other concerns to maintain clean separation of responsibilities and to enable reuse across different parts of the application.

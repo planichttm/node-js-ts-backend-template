@@ -1,0 +1,3 @@
+# Utils Layer
+
+The utils layer provides reusable helper functions and utilities that handle common tasks across the application. It contains pure utility functions for operations like data transformations, validation, logging, error handling, and date manipulation that don't fit into other architectural layers. These utilities follow functional programming principles where possible, focusing on immutability and side-effect-free operations to ensure predictability and testability throughout the codebase.

@@ -1,0 +1,66 @@
+{
+    "compilerOptions": {
+      "outDir": "./dist",
+      "rootDir": ".", // Änderung hier
+      "sourceRoot": ".", // Änderung hier
+      "baseUrl": ".",
+      
+      "target": "ES2020",
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      
+      "sourceMap": true,
+      
+      
+      // TypeScript Strict Checks
+      "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "strictBindCallApply": true,
+      "strictPropertyInitialization": true,
+      "noImplicitThis": true,
+      "useUnknownInCatchVariables": true,
+      "alwaysStrict": true,
+      
+      // Module Resolution
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      
+      // Project Options
+     
+  
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "resolveJsonModule": true,
+      
+      // Type Definitions
+      "typeRoots": [
+        "./node_modules/@types",
+        "./api/types"
+      ],
+      "types": [
+        "node",
+        "express"
+      ],
+  
+      // Additional Options
+      "removeComments": true,
+      "allowJs": true,
+      "checkJs": false,
+      "declaration": true,
+      "declarationMap": true,
+      "incremental": true
+    },
+    "include": [
+      "src/**/*.ts",
+      "src/types/**/*.d.ts",
+      "src/index.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      "**/*.spec.ts",
+      "**/*.test.ts"
+    ]
+  }

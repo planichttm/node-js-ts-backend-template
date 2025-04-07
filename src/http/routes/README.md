@@ -1,0 +1,3 @@
+# HTTP Routes Layer
+
+Routes define the API endpoints exposed by the application and map HTTP requests to the appropriate controller methods. They establish the routing structure, apply middleware like authentication, and connect the external interface to the controller functions. Routes are kept simple and declarative, focusing solely on defining the API surface without containing any business or validation logic.

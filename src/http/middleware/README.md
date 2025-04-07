@@ -1,0 +1,3 @@
+# HTTP Middleware Layer
+
+Middleware functions process requests before they reach route handlers, performing tasks like authentication, request enrichment, and error handling. They provide cross-cutting functionality that applies to multiple routes, keeping the code DRY and maintaining separation of concerns. This layer ensures proper request validation, security checks, and contextual data enrichment before the controller logic executes.

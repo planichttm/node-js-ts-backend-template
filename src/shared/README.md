@@ -1,0 +1,3 @@
+# Shared Layer
+
+The shared layer contains utilities, configurations, and types that are used across multiple parts of the application. It provides common functionality like logging, error handling, date manipulation, and API communication utilities that can be reused throughout the codebase. This layer helps maintain consistency in how cross-cutting concerns are handled and reduces code duplication by centralizing shared functionality.

@@ -1,0 +1,3 @@
+# Services Layer
+
+Services contain core business logic and orchestrate operations across multiple repositories to handle complex operations like data synchronization. They implement application-specific functionality that doesn't fit cleanly into repositories or controllers, often managing interactions with external APIs and coordinating multi-step processes. This layer helps maintain clean separation of concerns by handling cross-cutting processes that span multiple domain entities, such as the DexSyncService which coordinates volume, metrics, and social data updates.

@@ -1,0 +1,3 @@
+# HTTP Layer
+
+The HTTP layer handles all request/response cycles, routing, and middleware concerns for the REST API. Controllers in this layer validate inputs, transform requests, and delegate business logic to use cases without containing significant business logic themselves. This layer acts as the entry point for all client interactions, ensuring proper authentication, validation, and error handling before passing control to the appropriate use case.
