@@ -1,13 +1,28 @@
+// src/shared/config/supabase.ts
 import { createClient } from '@supabase/supabase-js';
-import * as dotenv from 'dotenv';
-import { validateSupabaseConfig } from '../utils/validation.utils';
+import { appConfig } from './app.config';
 
-dotenv.config();
+// Initialize supabase client conditionally based on config
+let supabaseClient = null;
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+// Only initialize Supabase if validationType is 'supabase' and credentials are present
+if (appConfig.auth.validationType === 'supabase') {
+  const { url, serviceKey } = appConfig.auth.supabase || {};
+  
+  if (url && serviceKey) {
+    try {
+      supabaseClient = createClient(url, serviceKey);
+      
+      // We can't use the logger here due to circular dependency,
+      // so we use console.log for initialization feedback
+      console.log(`[SupabaseConfig] Supabase client initialized successfully`);
+    } catch (error) {
+      console.error('[SupabaseConfig] Failed to initialize Supabase client', 
+        error instanceof Error ? error.message : 'Unknown error');
+    }
+  } else {
+    console.warn('[SupabaseConfig] Supabase validation type set but credentials missing');
+  }
+}
 
-validateSupabaseConfig(supabaseUrl, supabaseKey, supabaseServiceKey);
-
-export const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
+export const supabase = supabaseClient;
