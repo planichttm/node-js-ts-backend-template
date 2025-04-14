@@ -7,6 +7,7 @@ import { logger } from './shared/utils/logging.utils';
 import { getMemoryUsage } from './shared/utils/memory-management.utils';
 import { appConfig } from './shared/config/app.config';
 import { validateAuthCredentials } from './shared/utils/validation.utils';
+import textGenerationRoutes from './http/routes/text-generation.routes';
 
 const app = express();
 const port = appConfig.server.port;
@@ -27,6 +28,7 @@ app.use(clientInfoMiddleware);
 
 // API routes
 app.use('/api/health', healthRoutes);
+app.use('/api/text-generation', textGenerationRoutes);
 
 // Validate authentication configuration
 if (appConfig.auth.validationType !== 'none') {
